@@ -4,6 +4,7 @@
         "module": "CommonJS",
         "outDir": "dist"
     },
+    "compileOnSave": false,
     "include": [
         "src/**/*.ts"
     ],
