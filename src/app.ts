@@ -1,4 +1,22 @@
-console.log("Hello Word");
+import * as express from 'express';
 
-console.log("Nodemon");
-console.log('bigbig')
+class App {
+
+    public express: express.Application;
+
+    constructor() {
+        this.express = express();
+        this.middleware();
+    }
+
+    private middleware(): void {
+
+        this.express.use('/hello', (req: express.Request, res: express.Response, next: express.NextFunction ) => {
+            res.send({
+                hello: 'Hello Word!'
+            })
+        });
+    }
+}
+
+export default new App().express;
