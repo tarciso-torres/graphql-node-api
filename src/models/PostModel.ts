@@ -44,8 +44,14 @@ export default (sequelize: Sequelize.Sequelize, DataTypes: Sequelize.DataTypes):
     });
 
     Post.associate = (models: ModelsInterface): void => {
-        return;
-    }
+        Post.belongsTo(models.User, {
+            foreignKey: {
+                allowNull: false,
+                field: 'author',
+                name: 'author'
+            }
+        });
+    };
 
     return Post;
 }
