@@ -1,5 +1,5 @@
 import * as Sequelize from 'sequelize';
-import { genSaltSync, hashSync, compareSync} from 'bcryptjs';
+import { genSaltSync, hashSync, compareSync } from 'bcryptjs';
 
 import { BaseModelInterface } from '../interfaces/BaseModelInterface';
 import { ModelsInterface } from '../interfaces/ModelsInterface';
@@ -9,7 +9,9 @@ export interface UserAttributes {
     name?: string;
     email?: string;
     password?: string;
-    photo?; string;
+    photo?: string;
+    createdAt?: string;	
+    updatedAt?: string;
 }
 
 export interface UserInstance extends Sequelize.Instance<UserAttributes>, UserAttributes {
@@ -52,15 +54,21 @@ export default (sequelize: Sequelize.Sequelize, DataTypes: Sequelize.DataTypes):
                 }),
                 allowNull: true,
                 defaultValue: null
-            },
+            }
         },  {
               tableName: 'users',
               hooks: {
                   beforeCreate: (user: UserInstance, options: Sequelize.CreateOptions): void => {
                     const salt = genSaltSync();
                     user.password = hashSync(user.password, salt);
-                  }
-              }        
+                  },
+                  beforeUpdate: (user: UserInstance, options: Sequelize.CreateOptions): void => {
+                    if (user.changed('password')) {	
+                        const salt = genSaltSync();
+                        user.password = hashSync(user.password, salt);
+                    }
+                }
+            }        
         });
 
         User.associate = (models: ModelsInterface): void => {};
@@ -69,4 +77,4 @@ export default (sequelize: Sequelize.Sequelize, DataTypes: Sequelize.DataTypes):
             return compareSync(password, encodePassword);
         }
     return User;
-}
+};
