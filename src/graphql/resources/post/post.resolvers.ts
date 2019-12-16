@@ -2,8 +2,6 @@ import { GraphQLResolveInfo } from "graphql";
 import { Transaction } from 'sequelize';
 
 import { DBConnection } from '../../../interfaces/DBConnectionInterface';
-import { from } from "apollo-link";
-import { postMutations } from "./post.schema";
 import { PostInstance } from "../../../models/PostModel";
 
 export const postResolvers = {
@@ -59,7 +57,7 @@ export const postResolvers = {
                     .findById(id)
                     .then((post: PostInstance) => {
                         if(!post) throw new Error(`Post with id ${id} not found!`);
-                        return postMutations.update(input, {transaction: t});
+                        return post.update(input, {transaction: t});
                     });
             });
         },
