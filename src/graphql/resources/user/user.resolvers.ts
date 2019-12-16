@@ -6,6 +6,17 @@ import { UserInstance } from "../../../models/UserModel";
 
 export const userResolvers = {
 
+    User: {
+        posts: (user, { first = 10, offset = 0}, {db}: {db: DBConnection}, info: GraphQLResolveInfo) => {
+            return db.Post
+                .findAll({
+                    where: {author: user.get('id')},
+                    limit: first,
+                    offset: offset
+                });
+        }
+    },
+
     Query: {
 
         users: (parent, { first = 10, offset = 0}, {db}: {db: DBConnection}, info: GraphQLResolveInfo) => {
@@ -41,7 +52,7 @@ export const userResolvers = {
                 return db.User
                     .findById(id)
                     .then((user: UserInstance) => {
-                        if(!user) throw new Error(`User with id ${id} not found!`);]
+                        if(!user) throw new Error(`User with id ${id} not found!`);
 
                         return user.update(input, {transaction: t})
                             .then((user: UserInstance) => !!user);
@@ -50,13 +61,16 @@ export const userResolvers = {
             
         },
 
-        deleteUser: compose(...authResolvers)((parent, args, {db, authUser}: {db: DbConnection, authUser: AuthUser}, info: GraphQLResolveInfo) => {
+        deleteUser: (parent, {id}, {db}: {db: DBConnection}, info: GraphQLResolveInfo) => {
             return db.sequelize.transaction((t: Transaction) => {
                 return db.User
-                    .findById(authUser.id)
+                    .findById(id)
                     .then((user: UserInstance) => {
                         if(!user) throw new Error(`User with id ${id} not found!`);
                         return user.destroy({transaction: t})
-                            .then(user=> !!user);
+                            .then(user => !!user);
+                    });
+            });
+        }
     }
 };
