@@ -3,6 +3,7 @@ import { Transaction } from "sequelize";
 
 import { DBConnection } from "../../../interfaces/DBConnectionInterface";
 import { UserInstance } from "../../../models/UserModel";
+import { handleError } from "../../../utils/utils";
 
 export const userResolvers = {
 
@@ -13,7 +14,7 @@ export const userResolvers = {
                     where: {author: user.get('id')},
                     limit: first,
                     offset: offset
-                });
+                }).catch(handleError);
         }
     },
 
@@ -24,7 +25,7 @@ export const userResolvers = {
                 .findAll({
                     limit: first,
                     offset: offset
-                });
+                }).catch(handleError);
         },
 
         user: (parent, {id}, {db}: {db: DBConnection}, info: GraphQLResolveInfo) => {
@@ -33,7 +34,7 @@ export const userResolvers = {
                 .then((user: UserInstance) => {
                     if(!user) throw new Error(`User with id ${id} not found!`);
                     return user;
-                });
+                }).catch(handleError);
         }
     },
 
@@ -43,7 +44,7 @@ export const userResolvers = {
             return db.sequelize.transaction((t: Transaction) => {
                 return db.User
                     .create(input, {transaction: t});
-            });
+            }).catch(handleError);
         },
 
         updateUser: (parent, {id, input}, {db}: {db: DBConnection}, info: GraphQLResolveInfo) => {
@@ -70,7 +71,7 @@ export const userResolvers = {
                         return user.destroy({transaction: t})
                             .then(user => !!user);
                     });
-            });
+            }).catch(handleError);
         }
     }
 };
