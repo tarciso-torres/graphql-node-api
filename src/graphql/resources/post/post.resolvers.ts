@@ -14,7 +14,7 @@ export const postResolvers = {
                 .catch(handleError);
         },
 
-        posts: (post, { first = 10, offset = 0}, {db}: {db: DBConnection}, info: GraphQLResolveInfo) => {
+        comments: (post, { first = 10, offset = 0}, {db}: {db: DBConnection}, info: GraphQLResolveInfo) => {
             return db.Comment
                 .findAll({
                     where: {post: post.get('id')},

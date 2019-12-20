@@ -45,6 +45,8 @@ const userQueries = `
 
     # Find user by id
     user(id: ID!): User
+
+    currentUser: User
 `;
 
 const userMutations = `

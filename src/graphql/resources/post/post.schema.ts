@@ -45,7 +45,7 @@ const postMutations = `
     updatePost(id: ID!, input: PostInput!): Post
 
     # Delete a post send id
-    delete(id: ID!): Boolean
+    deletePost(id: ID!): Boolean
 `;
 
 export {
